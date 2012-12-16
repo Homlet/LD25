@@ -5,9 +5,12 @@ package uk.co.homletmoo.ld25.world
 	import net.flashpunk.FP;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.World;
-	import uk.co.homletmoo.ld25.Bullet;
+	import uk.co.homletmoo.ld25.CDisplay;
 	import uk.co.homletmoo.ld25.CPlayer;
+	import uk.co.homletmoo.ld25.entity.Bullet;
+	import uk.co.homletmoo.ld25.entity.Cursor;
 	import uk.co.homletmoo.ld25.entity.Enemy;
+	import uk.co.homletmoo.ld25.entity.HUD;
 	import uk.co.homletmoo.ld25.entity.Level;
 	import uk.co.homletmoo.ld25.entity.Player;
 	import uk.co.homletmoo.ld25.Globals;
@@ -20,9 +23,9 @@ package uk.co.homletmoo.ld25.world
 		private var _position:Number;
 		
 		private var _level:Level;
-		
 		private var _player:Player;
-		private var _enemyList:Vector.<Enemy>;
+		private var _HUD:HUD;
+		private var _cursor:Cursor;
 		
 		public function GameWorld()
 		{
@@ -37,40 +40,56 @@ package uk.co.homletmoo.ld25.world
 			// Setup player.
 			_player = new Player();
 			
-			// Setup enemy list and push enemies to it.
-			_enemyList = new Vector.<Enemy>;
-			for ( var i:int = 0; i < 5; i++ )
-				_enemyList.push( new Enemy() );
+			// Setup HUD.
+			_HUD = new HUD();
+			
+			// Setup cursor.
+			_cursor = new Cursor();
 		}
 		
 		override public function begin():void
 		{
 			add( _level );
 			add( _player );
-			addList( _enemyList );
+			add( _HUD );
+			add( _cursor );
+			
+			for ( var i:int = 0; i < globals.N_ENEMY_ACTIVE; i++ )
+				add( new Enemy() );
+			
 		}
 		
 		override public function update():void
 		{
 			// Handle scrolling of all objects:
-			_position += FP.elapsed * CPlayer.FWD;
+			var scrolled:Number = FP.elapsed * CPlayer.FWD;
+			_position += scrolled;
 			FP.camera.y = -_position;
 			
-			_player.scroll( FP.elapsed * CPlayer.FWD );
+			_player.scroll( scrolled );
 			
-			for each ( var e:Enemy in _enemyList )
-				e.scroll( FP.elapsed * CPlayer.FWD );
+			var enemies:Vector.<Enemy> = new Vector.<Enemy>;
+			getClass( Enemy, enemies );
+			for each ( var e:Enemy in enemies )
+				e.scroll( scrolled );
 			
-			if ( Input.mousePressed )
-				for each ( e in _enemyList )
-				{
-					var direction:Point = new Point(
-						Input.mouseFlashX - e.x + FP.camera.x,
-						Input.mouseFlashY - e.y + FP.camera.y
-					);
-					direction.normalize( 1 );
-					e.shoot( direction, 20 );
-				}
+			var bullets:Vector.<Bullet> = new Vector.<Bullet>;
+			getClass( Bullet, bullets );
+			for each ( var b:Bullet in bullets )
+				b.scroll( scrolled );
+			
+			// Top up enemy list
+			var nEnemies:uint = enemies.length;
+			while ( nEnemies < globals.N_ENEMY_ACTIVE )
+			{
+				nEnemies++;
+				var pos:Point = new Point(
+					0,
+					_position
+				);
+				var e1:Enemy = new Enemy( pos );
+				add( e1 );
+			}
 			
 			super.update();
 		}

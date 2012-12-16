@@ -2,6 +2,7 @@ package uk.co.homletmoo.ld25
 {
 	import net.flashpunk.Engine;
 	import net.flashpunk.FP;
+	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;
 	
 	import uk.co.homletmoo.ld25.world.GameWorld;
@@ -20,8 +21,10 @@ package uk.co.homletmoo.ld25
 				CDisplay.FIXED_TIME
 			);
 			
-			FP.console.enable();
-			FP.console.toggleKey = Key.TAB;
+			//FP.console.enable();
+			//FP.console.toggleKey = Key.TAB;
+			
+			Input.mouseCursor = "hide";
 		}
 		
 		override public function init():void
