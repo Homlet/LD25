@@ -45,6 +45,24 @@ package uk.co.homletmoo.ld25
 		// Cursor graphics
 		[Embed (source = "res/cursor.png")]    public static const CURSOR:Class;
 		[Embed (source = "res/crosshair.png")] public static const CROSSHAIR:Class;
+		
+		// GUI components
+		[Embed (source = "res/backdrop.png")]    public static const GUI_BACKDROP:Class;
+		[Embed (source = "res/menu_button.png")] public static const GUI_BUTTON:Class;
+		
+		[Embed (source = "res/flashpunk.png")]   public static const FP_LOGO:Class;
+		[Embed (source = "res/HM.png")]          public static const HM_LOGO:Class;
+		
+		// Sound clips.
+		[Embed (source = "res/plr_shoot.mp3")]   public static const SND_PLAYER_SHOOT:Class;
+		[Embed (source = "res/plr_hurt.mp3")]    public static const SND_PLAYER_HURT:Class;
+		[Embed (source = "res/enmy_shoot.mp3")]  public static const SND_ENEMY_SHOOT:Class;
+		[Embed (source = "res/enmy_hurt.mp3")]   public static const SND_ENEMY_HURT:Class;
+		[Embed (source = "res/enmy_add.mp3")]    public static const SND_ENEMY_ADDED:Class;
+		[Embed (source = "res/kill.mp3")]        public static const SND_KILL:Class;
+		[Embed (source = "res/menu_button.mp3")] public static const SND_MENU_BUTTON:Class;
+		
+		[Embed (source = "res/music.mp3")] public static const SND_MUSIC:Class;
 	}
 
 }

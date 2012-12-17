@@ -14,14 +14,30 @@ package uk.co.homletmoo.ld25.entity
 	{
 		private var _velocity:Point;
 		
-		public function Bullet( x:int, y:int, velocity:Point )
+		public function Bullet( x:int, y:int, velocity:Point, type:String )
 		{
 			this.x = x;
 			this.y = y;
 			
 			_velocity = velocity;
 			
-			graphic = Image.createCircle( 4, 0, 1 );
+			this.type = type;
+			
+			switch ( type )
+			{
+				case CType.BULLET_ENEMY:
+					graphic = Image.createCircle( 4, 0xFF111111, 1 );
+				break;
+				
+				case CType.BULLET_PLAYER:
+					graphic = Image.createCircle( 4, 0xFFEEEEEE, 1 );
+				break;
+				
+				default:
+					trace( "INVALID BULLET TYPE, BAD HOMLETMOO, FIX CODES" );
+				break;
+			}
+			
 			setHitbox( 8, 8, 0, 0 );
 		}
 		
@@ -30,12 +46,31 @@ package uk.co.homletmoo.ld25.entity
 			x += _velocity.x * FP.elapsed;
 			y += _velocity.y * FP.elapsed;
 			
-			var player:Player = collide( CType.PLAYER, x, y ) as Player;
-			if ( player != null )
+			switch ( type )
 			{
-				player.damage( 1 );
-				GameWorld.globals.SCORE++;
-				FP.world.remove( this );
+				case CType.BULLET_ENEMY:
+					var player:Player = collide( CType.PLAYER, x, y ) as Player;
+					if ( player != null )
+					{
+						player.damage( 1 );
+						GameWorld.globals.SCORE++;
+						FP.world.remove( this );
+					}
+				break;
+				
+				case CType.BULLET_PLAYER:
+					var enemy:Enemy = collide( CType.ENEMY, x, y ) as Enemy;
+					if ( enemy != null )
+					{
+						enemy.damage( 1 );
+						GameWorld.globals.SCORE -= 2;
+						FP.world.remove( this );
+					}
+				break;
+				
+				default:
+					trace( "INVALID BULLET TYPE, BAD HOMLETMOO, FIX CODES" );
+				break;
 			}
 			
 			if ( x - FP.camera.x > CDisplay.WIDTH ||

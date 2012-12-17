@@ -2,7 +2,7 @@ package uk.co.homletmoo.ld25
 {
 	public class CHUD 
 	{
-		// Dimensions of the button frame
+		// Dimensions of the button sprite frame.
 		public static const BUTTON_SPR_WIDTH  :int = 19;
 		public static const BUTTON_SPR_HEIGHT :int = 10;
 		

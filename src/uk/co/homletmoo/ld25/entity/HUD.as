@@ -10,6 +10,7 @@ package uk.co.homletmoo.ld25.entity
 	import uk.co.homletmoo.ld25.Assets;
 	import uk.co.homletmoo.ld25.CDisplay;
 	import uk.co.homletmoo.ld25.CHUD;
+	import uk.co.homletmoo.ld25.CSound;
 	import uk.co.homletmoo.ld25.world.GameWorld;
 	
 	
@@ -24,7 +25,6 @@ package uk.co.homletmoo.ld25.entity
 		private var _playerOld:int;
 		private var _playerText:Text;
 		
-		private var _buttonRect:Rectangle;
 		private var _button:Spritemap;
 		
 		public function HUD() 
@@ -51,7 +51,6 @@ package uk.co.homletmoo.ld25.entity
 			_playerText.size = 8;
 			_playerText.scale = CDisplay.SCALE;
 			
-			_buttonRect = new Rectangle( 400, 4, CHUD.BUTTON_WIDTH, CHUD.BUTTON_HEIGHT );
 			_button = new Spritemap( Assets.HUD_BUTTON, CHUD.BUTTON_SPR_WIDTH, CHUD.BUTTON_SPR_HEIGHT );
 			_button.x = 400;
 			_button.y = 4;
@@ -82,17 +81,17 @@ package uk.co.homletmoo.ld25.entity
 				_enemyText.text = 'x' + _enemyOld;
 			}
 			
-			if ( GameWorld.globals.SCORE != _scoreOld )
+			if ( GameWorld.globals.N_LIVES != _playerOld )
 			{
 				_playerOld = GameWorld.globals.N_LIVES;
 				_playerText.text = 'x' + _playerOld;
 			}
 			
-			if ( GameWorld.globals.N_ENEMY_ACTIVE < GameWorld.globals.N_ENEMY_ACTIVE_MAX )
+			if ( GameWorld.globals.N_ENEMY_ACTIVE < GameWorld.globals.N_ENEMY_ACTIVE_MAX && GameWorld.globals.N_ENEMY > 0 )
 			{
 				_button.visible = true;
 				
-				if ( _buttonRect.contains( Input.mouseX, Input.mouseY ) )
+				if ( CDisplay.BUTTON_AREA.contains( Input.mouseX, Input.mouseY ) )
 				{
 					if ( Input.mouseDown )
 						_button.play( CHUD.BUTTON_DEPRESS );
@@ -101,6 +100,7 @@ package uk.co.homletmoo.ld25.entity
 					
 					if ( Input.mouseReleased )
 					{
+						CSound.ENEMY_ADDED.play();
 						GameWorld.globals.N_ENEMY_ACTIVE++;
 						GameWorld.globals.N_ENEMY--;
 					}

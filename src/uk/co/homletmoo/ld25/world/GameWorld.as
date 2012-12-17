@@ -7,6 +7,8 @@ package uk.co.homletmoo.ld25.world
 	import net.flashpunk.World;
 	import uk.co.homletmoo.ld25.CDisplay;
 	import uk.co.homletmoo.ld25.CPlayer;
+	import uk.co.homletmoo.ld25.CSound;
+	import uk.co.homletmoo.ld25.CType;
 	import uk.co.homletmoo.ld25.entity.Bullet;
 	import uk.co.homletmoo.ld25.entity.Cursor;
 	import uk.co.homletmoo.ld25.entity.Enemy;
@@ -27,12 +29,13 @@ package uk.co.homletmoo.ld25.world
 		private var _HUD:HUD;
 		private var _cursor:Cursor;
 		
-		public function GameWorld()
+		public function GameWorld( difficulty:int )
 		{
 			_position = 0;
 			
 			// Reset globals
 			globals = new Globals();
+			globals.setDifficulty( difficulty );
 			
 			// Setup level entity.
 			_level = new Level();
@@ -44,11 +47,13 @@ package uk.co.homletmoo.ld25.world
 			_HUD = new HUD();
 			
 			// Setup cursor.
-			_cursor = new Cursor();
+			_cursor = new Cursor( CType.CURSOR_INGAME );
 		}
 		
 		override public function begin():void
 		{
+			CSound.MUSIC.loop();
+			
 			add( _level );
 			add( _player );
 			add( _HUD );
@@ -56,7 +61,6 @@ package uk.co.homletmoo.ld25.world
 			
 			for ( var i:int = 0; i < globals.N_ENEMY_ACTIVE; i++ )
 				add( new Enemy() );
-			
 		}
 		
 		override public function update():void
@@ -91,7 +95,18 @@ package uk.co.homletmoo.ld25.world
 				add( e1 );
 			}
 			
+			if ( globals.N_ENEMY_ACTIVE == 0 )
+			{
+				globals.SCORE += 10 * GameWorld.globals.N_ENEMY;
+				FP.world = new EndWorld( CType.END_LEVEL_COMPLETE, globals.SCORE, globals.DIFFICULTY );
+			}
+			
 			super.update();
+		}
+		
+		override public function end():void
+		{
+			CSound.MUSIC.stop();
 		}
 		
 	}

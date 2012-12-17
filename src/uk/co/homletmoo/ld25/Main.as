@@ -4,8 +4,7 @@ package uk.co.homletmoo.ld25
 	import net.flashpunk.FP;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;
-	
-	import uk.co.homletmoo.ld25.world.GameWorld;
+	import uk.co.homletmoo.ld25.world.SplashWorld;
 	
 	
 	[SWF (width = "480", height = "640", backgroundColor = "#1A1414")]
@@ -29,9 +28,9 @@ package uk.co.homletmoo.ld25
 		
 		override public function init():void
 		{
-			CControls.setup( false );
+			CSound.setup();
 			
-			FP.world = new GameWorld();
+			FP.world = new SplashWorld();
 		}
 		
 	}

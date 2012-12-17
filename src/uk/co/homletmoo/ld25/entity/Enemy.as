@@ -11,6 +11,8 @@ package uk.co.homletmoo.ld25.entity
 	import uk.co.homletmoo.ld25.Assets;
 	import uk.co.homletmoo.ld25.CDisplay;
 	import uk.co.homletmoo.ld25.CEnemy;
+	import uk.co.homletmoo.ld25.CSound;
+	import uk.co.homletmoo.ld25.CType;
 	import uk.co.homletmoo.ld25.entity.Bullet;
 	import uk.co.homletmoo.ld25.world.GameWorld;
 	
@@ -34,10 +36,12 @@ package uk.co.homletmoo.ld25.entity
 		{
 			_isMoving = false;
 			
-			_shotTimer = 0;
+			_health = GameWorld.globals.ENEMY_HEALTH_MAX;
+			
+			_shotTimer = 0.0;
 			
 			_velocity = new Point( 0 );
-			_offset = new Point( Math.random() * 200 - 100, Math.random() * 200 - 100 );
+			_offset = new Point( Math.random() * 160 - 80, Math.random() * 160 - 80 );
 			
 			// Create spritemap with player image data.
 			_img = new Spritemap( Assets.ENEMY, CEnemy.SPR_WIDTH, CEnemy.SPR_HEIGHT );
@@ -59,19 +63,26 @@ package uk.co.homletmoo.ld25.entity
 			
 			x = _bounds.x + _bounds.width / 2 + _offset.x;
 			y = _bounds.y + _bounds.height / 2 + _offset.y;
+			type = CType.ENEMY;
 		}
 		
 		override public function update():void
 		{
 			if ( _health < 0 )
+			{
+				CSound.KILL.play();
+				GameWorld.globals.N_ENEMY_ACTIVE--;
 				FP.world.remove( this );
+			}
 			
 			_velocity = new Point( 0 );
 			
 			_shotTimer -= FP.elapsed * Math.random();
 			if ( Input.mouseDown )
 			{
-				if ( !CDisplay.SHOOTING_AREA.contains( Input.mouseX, Input.mouseY ) )
+				var isInButtonArea:Boolean = CDisplay.BUTTON_AREA.contains( Input.mouseX, Input.mouseY ) && GameWorld.globals.N_ENEMY_ACTIVE < GameWorld.globals.N_ENEMY_ACTIVE_MAX;
+				
+				if ( CDisplay.MOVING_AREA.contains( Input.mouseX, Input.mouseY ) && !isInButtonArea )
 				{
 					if ( !_isMoving )
 						_offset = new Point( Math.random() * 200 - 100, Math.random() * 200 - 100 );
@@ -91,7 +102,7 @@ package uk.co.homletmoo.ld25.entity
 						var vel:Point = new Point( mouseDir.x * CEnemy.SPEED, mouseDir.y * CEnemy.SPEED );
 						_velocity = _velocity.add( vel );
 					}
-				} else
+				} else if ( CDisplay.SHOOTING_AREA.contains( Input.mouseX, Input.mouseY ) )
 				{
 					_isMoving = false;
 					
@@ -107,6 +118,10 @@ package uk.co.homletmoo.ld25.entity
 						direction.normalize( 1 );
 						shoot( direction, 5 );
 					}
+				} else
+				{
+					_isMoving = false;
+					GameWorld.globals.IS_FIRING = false;
 				}
 			} else
 			{
@@ -133,8 +148,8 @@ package uk.co.homletmoo.ld25.entity
 		
 		public function damage( amount:int ):void
 		{
+			CSound.ENEMY_HURT.play();
 			_health -= amount;
-			FP.console.log( _health );
 		}
 		
 		private function setAnimation():void
@@ -162,6 +177,8 @@ package uk.co.homletmoo.ld25.entity
 		
 		private function shoot( direction:Point, accuracy:Number ):void
 		{
+			CSound.ENEMY_SHOOT.play();
+			
 			if ( accuracy > 0 )
 			{
 				var angle:Number = Math.atan2( direction.y, direction.x );
@@ -177,7 +194,7 @@ package uk.co.homletmoo.ld25.entity
 				direction.y * GameWorld.globals.BULLET_SPEED
 			);
 			
-			FP.world.add( new Bullet( x, y, vel ) );
+			FP.world.add( new Bullet( x + CEnemy.H_WIDTH, y + CEnemy.HEIGHT, vel, CType.BULLET_ENEMY ) );
 		}
 		
 	}

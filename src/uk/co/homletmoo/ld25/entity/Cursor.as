@@ -6,6 +6,7 @@ package uk.co.homletmoo.ld25.entity
 	import net.flashpunk.utils.Input;
 	import uk.co.homletmoo.ld25.Assets;
 	import uk.co.homletmoo.ld25.CDisplay;
+	import uk.co.homletmoo.ld25.CType;
 	
 	
 	public class Cursor extends Entity
@@ -13,7 +14,7 @@ package uk.co.homletmoo.ld25.entity
 		private var _cursor:Image;
 		private var _crosshair:Image;
 		
-		public function Cursor() 
+		public function Cursor( type:String ) 
 		{
 			x = Input.mouseFlashX;
 			y = Input.mouseFlashY;
@@ -30,6 +31,8 @@ package uk.co.homletmoo.ld25.entity
 			graphic = _cursor;
 			
 			layer = -2;
+			
+			this.type = type;
 		}
 		
 		override public function update():void
@@ -37,7 +40,7 @@ package uk.co.homletmoo.ld25.entity
 			x = Input.mouseFlashX;
 			y = Input.mouseFlashY;
 			
-			if ( CDisplay.SHOOTING_AREA.contains( x, y ) )
+			if ( CDisplay.SHOOTING_AREA.contains( x, y ) && type == CType.CURSOR_INGAME )
 				graphic = _crosshair;
 			else
 				graphic = _cursor;

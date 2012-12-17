@@ -12,10 +12,18 @@ package uk.co.homletmoo.ld25
 		// Global sprite scale factor.
 		public static const SCALE :int = 4;
 		
-		// Shooting area.
+		// Screen areas.
+		public static const MOVING_AREA   :Rectangle = new Rectangle(
+			0,   0,
+			480, 300
+		);
 		public static const SHOOTING_AREA :Rectangle = new Rectangle(
 			0,   300,
 			480, 300
+		);
+		public static const BUTTON_AREA   :Rectangle = new Rectangle(
+			400, 4,
+			19 * SCALE, 10 * SCALE
 		);
 		
 		// Time related settings.
